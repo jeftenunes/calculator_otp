@@ -1,25 +1,24 @@
 defmodule CalculatorOtp do
-  alias CalculatorOtp.Core, as: Core
+  alias CalculatorOtp.Boundary, as: Boundary
 
-  def start(initial_state) do
-    spawn(fn -> run(initial_state) end)
-  end
+  def start,
+    do: Boundary.start()
 
-  def run(state) do
-    state
-    |> Core.do_work()
-    |> run()
-  end
+  def clear(calculator), do: send(calculator, :clear)
+  def add(calculator, n), do: send(calculator, {:add, n})
+  def divide(calculator, n), do: send(calculator, {:divide, n})
+  def multiply(calculator, n), do: send(calculator, {:multiply, n})
+  def subtract(calculator, n), do: send(calculator, {:subtract, n})
 
-  def loop(state) do
+  def state(calculator) do
+    send(calculator, {:state, self()})
+
     receive do
-      :some_message ->
-        Core.do_work(state)
-
-      :another_message ->
-        Core.do_another_work(state)
+      {:state, state} ->
+        state
+    after
+      5000 ->
+        {:error, :timeout}
     end
-
-    loop(state)
   end
 end

@@ -18,5 +18,5 @@ defmodule CalculatorOtp.Core do
   def dec(acc), do: acc - 1
 
   def fold(list, acc, f),
-    do: Enum.reduce(list, acc, fn item, acc -> f.(acc, item) end)
+    do: Enum.reduce(list, acc, fn item, acc -> &f.(&2, &1) end)
 end
