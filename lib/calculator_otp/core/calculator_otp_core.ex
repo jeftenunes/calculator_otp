@@ -16,6 +16,7 @@ defmodule CalculatorOtp.Core do
 
   def inc(acc), do: acc + 1
   def dec(acc), do: acc - 1
+  def negate!(acc), do: acc * -1
 
   def fold(list, acc, f),
     do: Enum.reduce(list, acc, fn item, acc -> &f.(&2, &1) end)
