@@ -35,16 +35,20 @@ defmodule CalculatorOtp.Boundary.Server do
     {:noreply, Core.divide(state, number)}
   end
 
-  def handle_cast({:inc}, state) do
+  def handle_cast({:clear}, _state) do
+    {:noreply, 0}
+  end
+
+  def handle_info({:inc}, state) do
     {:noreply, Core.inc(state)}
   end
 
-  def handle_cast({:dec}, state) do
+  def handle_info({:dec}, state) do
     {:noreply, Core.dec(state)}
   end
 
-  def handle_cast({:clear}, _state) do
-    {:noreply, 0}
+  def handle_info({:negate!}, state) do
+    {:noreply, Core.negate!(state)}
   end
 
   def handle_call(:state, _from, state) do
@@ -55,10 +59,12 @@ defmodule CalculatorOtp.Boundary.Server do
   Aqui, criaremos a api, q costumeiramente, em elixir,
   fica dentro do genserver
   """
-  def inc(pid), do: GenServer.cast(pid, {:inc})
-  def dec(pid), do: GenServer.cast(pid, {:dec})
+  def dec(pid), do: send(pid, {:dec})
+  def inc(pid), do: send(pid, {:inc})
+  def negate!(pid), do: send(pid, {:negate!})
+
+  def clear(pid), do: GenServer.cast(pid, {:clear})
   def add(pid, n), do: GenServer.cast(pid, {:add, n})
-  def clear(pid, n), do: GenServer.cast(pid, {:clear, n})
   def divide(pid, n), do: GenServer.cast(pid, {:divide, n})
   def subtract(pid, n), do: GenServer.cast(pid, {:subtract, n})
   def multiply(pid, n), do: GenServer.cast(pid, {:multiply, n})
